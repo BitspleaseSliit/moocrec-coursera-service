@@ -29,37 +29,7 @@ def get_lecture_filename(combined_section_lectures_nums,
                          lecname,
                          title,
                          fmt):
-    """
-    Prepare a destination lecture filename.
-
-    @param combined_section_lectures_nums: Flag that indicates whether
-        section lectures should have combined numbering.
-    @type combined_section_lectures_nums: bool
-
-    @param section_dir: Path to current section directory.
-    @type section_dir: str
-
-    @param secnum: Section number.
-    @type secnum: int
-
-    @param lecnum: Lecture number.
-    @type lecnum: int
-
-    @param lecname: Lecture name.
-    @type lecname: str
-
-    @param title: Resource title.
-    @type title: str
-
-    @param fmt: Format of the resource (pdf, csv, etc)
-    @type fmt: str
-
-    @return: Lecture file name.
-    @rtype: str
-    """
-    # FIXME: this is a quick and dirty solution to Filename too long
-    # problem. We need to think of a more general way to solve this
-    # issue.
+  
     fmt = fmt[:FORMAT_MAX_LENGTH]
     title = title[:TITLE_MAX_LENGTH]
 
