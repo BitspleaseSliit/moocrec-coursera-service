@@ -58,11 +58,14 @@ cookielib.Cookie.__init__ = __fixed_init__
 
 
 class ClassNotFound(BaseException):
-
-
+    """
+    Raised if a course is not found in Coursera's site.
+    """
 
 class AuthenticationFailed(BaseException):
-
+     """
+    Raised if we cannot authenticate on Coursera's site.
+    """
 
 def prepare_auth_headers(session, include_cauth=False):
 

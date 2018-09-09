@@ -34,11 +34,11 @@ from coursera import __version__
 
 
 # URL containing information about outdated modules
-_SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
+# _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
 
-assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _SEE_URL
-assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
-assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
+# assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _SEE_URL
+# assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
+# assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
 
 # Login Details
 USERNAME = "bitpleasesliit@gmail.com"
@@ -157,7 +157,7 @@ def main():
 
     args = parse_args()
 
-    args.class_names = ["ss"] # class Name should 
+    args.class_names = ["algorithms-part1"] # class Name should 
 
     logging.info('coursera_dl args %s', args) # XXXX
     logging.info('coursera_dl version %s', __version__) # XXXX

@@ -107,7 +107,7 @@ def parse_args(args=None):
         '--subtitle-language',
         dest='subtitle_language',
         action='store',
-        default='all',
+        default='en',
         help='Choose language to download subtitles and transcripts.'
         '(Default: all) Use special value "all" to download all available.'
         'To download subtitles and transcripts of multiple languages,'
@@ -169,7 +169,7 @@ def parse_args(args=None):
         '--formats',
         dest='file_formats',
         action='store',
-        default='all',
+        default='mp4 pdf txt',
         help='file format extensions to be downloaded in'
         ' quotes space separated, e.g. "mp4 pdf" '
         '(default: special value "all")')
