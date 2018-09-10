@@ -32,14 +32,6 @@ from extractors import CourseraExtractor
 
 from coursera import __version__
 
-
-# URL containing information about outdated modules
-# _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
-
-# assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _SEE_URL
-# assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
-# assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
-
 # Login Details
 USERNAME = "bitpleasesliit@gmail.com"
 PASSWORD = "sliit_bitplease"
@@ -151,7 +143,7 @@ def download_class(session, args, class_name):
     return download_on_demand_class(session, args, class_name)
 
 # 01
-def main():
+def scrapper():
 
     # Main entry point for execution as a program
 
@@ -221,5 +213,5 @@ def main():
                          class_name, class_name)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

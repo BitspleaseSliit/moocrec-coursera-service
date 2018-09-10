@@ -1,0 +1,6 @@
+from scrapper.coursera_dl import ( scrapper )
+
+
+
+if __name__ == '__main__':
+    scrapper()

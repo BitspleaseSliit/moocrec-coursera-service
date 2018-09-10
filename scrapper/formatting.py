@@ -29,9 +29,10 @@ def get_lecture_filename(combined_section_lectures_nums,
                          lecname,
                          title,
                          fmt):
-  
+    
     fmt = fmt[:FORMAT_MAX_LENGTH]
     title = title[:TITLE_MAX_LENGTH]
+    # section_dir = fmt # sajeeva
 
     # Format lecture file name
     if combined_section_lectures_nums:
