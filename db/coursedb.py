@@ -11,3 +11,12 @@ def getAll():
 
     return courses_array
 
+def getDownlodCourses():
+    download_courses_array = []
+    for course in courses.find({"processed": False, "download": True}):
+        download_courses_array.append(course)
+    print(download_courses_array)
+
+    return download_courses_array
+
+# def updateVideoStyle(video_style, course):
