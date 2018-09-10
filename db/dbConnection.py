@@ -9,4 +9,4 @@ with open('../config.json', 'r') as f:
 dbClient = pymongo.MongoClient(config['DB_CLIENT'])
 db = dbClient[config['DATABASE']]
 
-print(db.list_collection_names())
+# print(db.list_collection_names())
