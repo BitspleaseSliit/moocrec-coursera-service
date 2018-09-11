@@ -84,6 +84,17 @@ class Courses:
             print(e)
             return False
 
+    def getDownloadCoursesPaths(self):
+        download_courses = self.getDownlodCourses()
+        if download_courses.count == 0:
+            return []
+        else:
+            courses_path = []
+            for course in download_courses:
+                courses_path.append(course["path"])
+            return courses_path
+
+
     # mycourse = getAll()[0]
     # print(mycourse)
     # videoStyle = {}

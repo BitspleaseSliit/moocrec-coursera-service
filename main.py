@@ -6,4 +6,4 @@ from db.coursedb import ( Courses )
 if __name__ == '__main__':
     # scrapper()
     courses = Courses()
-    print(courses.getAll())
+    print(courses.getDownloadCoursesPaths())
