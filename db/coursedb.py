@@ -37,7 +37,16 @@ def updateVideoStyle(video_style, course):
     except pymongo.errors.PyMongoError as e:
         print(e)
         return False
-    
+
+def updateAbstractTopics(abstract_topics, course):
+    try:
+        select_query = { "_id": ObjectId(course["_id"])}
+        insert_value = { "$set": { "abstractTopics": abstract_topics} }
+        result = courses.update_one(select_query, insert_value)
+        return result.matched_count > 0 
+    except pymongo.errors.PyMongoError as e:
+        print(e)
+        return False  
 
 # mycourse = getAll()[0]
 # print(mycourse)
