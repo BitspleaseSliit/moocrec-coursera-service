@@ -13,6 +13,8 @@ if __name__ == '__main__':
     for course in download_courses:
         if scrapper(course["path"]):
             courses.updateProcessedTrue(course)
+            print("course download fail")
         else:
             courses.updateProcessedFalse(course)
+            print("course download successfull")
         

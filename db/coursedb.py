@@ -13,7 +13,7 @@ class Courses:
     def getAll(self):
         courses_array = []
         try:
-            for course in self.courses.find():
+            for course in self.courses.find({"logo": "coursera"}):
                 # print(course["_id"])
                 courses_array.append(course)
             return courses_array
@@ -25,7 +25,7 @@ class Courses:
     def getDownlodCourses(self):
         download_courses_array = []
         try:
-            for course in self.courses.find({"processed": False, "download": True}):
+            for course in self.courses.find({"logo": "coursera", "processed": False, "download": True}):
                 download_courses_array.append(course)
                 # print(download_courses_array)
             return download_courses_array
