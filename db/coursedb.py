@@ -58,6 +58,26 @@ def updateLinguisticComplexity(linguistic_complexity, course):
         print(e)
         return False
 
+def updateProcessedTrue(course):
+    try:
+        select_query = { "_id": ObjectId(course["_id"])}
+        insert_value = { "$set": { "processed": True } }
+        result = courses.update_one(select_query, insert_value)
+        return result.matched_count > 0 
+    except pymongo.errors.PyMongoError as e:
+        print(e)
+        return False
+
+def updateProcessedFalse(course):
+    try:
+        select_query = { "_id": ObjectId(course["_id"])}
+        insert_value = { "$set": { "processed": False } }
+        result = courses.update_one(select_query, insert_value)
+        return result.matched_count > 0 
+    except pymongo.errors.PyMongoError as e:
+        print(e)
+        return False
+
 # mycourse = getAll()[0]
 # print(mycourse)
 # videoStyle = {}
