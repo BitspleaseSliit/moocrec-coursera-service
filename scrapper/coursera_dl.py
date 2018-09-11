@@ -143,13 +143,13 @@ def download_class(session, args, class_name):
     return download_on_demand_class(session, args, class_name)
 
 # 01
-def scrapper():
+def scrapper(course_path):
 
     # Main entry point for execution as a program
 
     args = parse_args()
 
-    args.class_names = ["algorithms-part1"] # class Name should 
+    args.class_names = [course_path] # class Name should 
 
     logging.info('coursera_dl args %s', args) # XXXX
     logging.info('coursera_dl version %s', __version__) # XXXX
