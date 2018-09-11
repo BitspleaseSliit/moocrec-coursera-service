@@ -48,6 +48,16 @@ def updateAbstractTopics(abstract_topics, course):
         print(e)
         return False  
 
+def updateLinguisticComplexity(linguistic_complexity, course):
+    try:
+        select_query = { "_id": ObjectId(course["_id"])}
+        insert_value = { "$set": { "linguisticComplexity": linguistic_complexity} }
+        result = courses.update_one(select_query, insert_value)
+        return result.matched_count > 0 
+    except pymongo.errors.PyMongoError as e:
+        print(e)
+        return False
+
 # mycourse = getAll()[0]
 # print(mycourse)
 # videoStyle = {}
