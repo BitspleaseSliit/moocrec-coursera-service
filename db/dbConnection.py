@@ -3,7 +3,7 @@ import configparser
 import json
 
 config = configparser.ConfigParser()
-with open('../config.json', 'r') as f:
+with open('./config.json', 'r') as f:
     config = json.load(f)
 
 dbClient = pymongo.MongoClient(config['DB_CLIENT'])
