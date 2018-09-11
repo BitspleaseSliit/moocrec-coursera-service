@@ -6,26 +6,38 @@ courses = db["test_courses"]
 
 def getAll():
     courses_array = []
-    for course in courses.find():
-        # print(course["_id"])
-        courses_array.append(course)
-
-    return courses_array
+    try:
+        for course in courses.find():
+            # print(course["_id"])
+            courses_array.append(course)
+        return courses_array
+    except pymongo.errors.PyMongoError as e:
+        print(e)
+        return []
+    
 
 def getDownlodCourses():
     download_courses_array = []
-    for course in courses.find({"processed": False, "download": True}):
-        download_courses_array.append(course)
-    # print(download_courses_array)
-
-    return download_courses_array
+    try:
+        for course in courses.find({"processed": False, "download": True}):
+            download_courses_array.append(course)
+            # print(download_courses_array)
+        return download_courses_array
+    except pymongo.errors.PyMongoError as e:
+        print(e)
+        return []
+    
 
 def updateVideoStyle(video_style, course):
-    select_query = { "_id": ObjectId(course["_id"])}
-    insert_value = { "$set": { "videoStyle": video_style} }
-    courses.update_one(select_query, insert_value)
-
-    return True
+    try:
+        select_query = { "_id": ObjectId(course["_id"])}
+        insert_value = { "$set": { "videoStyle": video_style} }
+        result = courses.update_one(select_query, insert_value)
+        return result.matched_count > 0 
+    except pymongo.errors.PyMongoError as e:
+        print(e)
+        return False
+    
 
 # mycourse = getAll()[0]
 # print(mycourse)
