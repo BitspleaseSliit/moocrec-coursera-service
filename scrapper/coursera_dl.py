@@ -210,6 +210,11 @@ def scrapper(course_path):
             logging.info('%s (https://www.coursera.org/learn/%s)',
                          class_name, class_name)
 
+    if completed_classes.count > 0:
+        return True
+    else:
+        return False
+
 
 # if __name__ == '__main__':
 #     main()

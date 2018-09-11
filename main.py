@@ -11,4 +11,8 @@ if __name__ == '__main__':
     download_courses = courses.getDownlodCourses()
 
     for course in download_courses:
-        scrapper(course["path"])
+        if scrapper(course["path"]):
+            courses.updateProcessedTrue(course)
+        else:
+            courses.updateProcessedFalse(course)
+        
