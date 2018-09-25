@@ -11,7 +11,7 @@ import ssl
 import requests
 from requests.adapters import HTTPAdapter
 
-try:  # Workaround for broken Debian/Ubuntu packages? (See issue #331)
+try:  
     from requests.packages.urllib3.poolmanager import PoolManager
 except ImportError:
     from urllib3.poolmanager import PoolManager
@@ -19,12 +19,10 @@ except ImportError:
 
 from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
-from define import CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES, AUTH_URL_V3
-from utils import mkdir_p, random_string
+from .define import CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES, AUTH_URL_V3
+from .utils import mkdir_p, random_string
 
-# Monkey patch cookielib.Cookie.__init__.
-# Reason: The expires value may be a decimal string,
-# but the Cookie class uses int() ...
+
 __original_init__ = cookielib.Cookie.__init__
 
 
@@ -252,9 +250,6 @@ def get_cookie_jar(cookies_file):
     cj = cookielib.MozillaCookieJar()
     cookies = load_cookies_file(cookies_file)
 
-    # nasty hack: cj.load() requires a filename not a file, but if I use
-    # stringio, that file doesn't exist. I used NamedTemporaryFile before,
-    # but encountered problems on Windows.
     cj._really_load(cookies, 'StringIO.cookies', False, False)
 
     return cj

@@ -8,10 +8,10 @@ import sys
 import logging
 import configargparse as argparse
 
-from coursera import __version__
+from scrapper import __version__
 
-from credentials import get_credentials, CredentialsError, keyring
-from utils import decode_input
+from .credentials import get_credentials, CredentialsError, keyring
+from .utils import decode_input
 
 LOCAL_CONF_FILE_NAME = 'coursera-dl.conf'
 

@@ -18,11 +18,11 @@ from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 import attr
 
-from utils import (BeautifulSoup, make_coursera_absolute_url,
+from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename,
                     is_debug_run, unescape_html)
-from network import get_reply, get_page, post_page_and_reply
-from define import (OPENCOURSE_SUPPLEMENT_URL,
+from .network import get_reply, get_page, post_page_and_reply
+from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
                      OPENCOURSE_ASSET_URL,
                      OPENCOURSE_ASSETS_URL,
@@ -58,7 +58,7 @@ from define import (OPENCOURSE_SUPPLEMENT_URL,
                      IN_MEMORY_MARKER)
 
 
-from cookies import prepare_auth_headers
+from .cookies import prepare_auth_headers
 
 
 class QuizExamToMarkupConverter(object):
@@ -166,17 +166,7 @@ class MarkupToHTMLConverter(object):
         self._mathjax_cdn_url = mathjax_cdn_url
 
     def __call__(self, markup):
-        """
-        Convert instructions markup to make it more suitable for
-        offline reading.
 
-        @param markup: HTML (kinda) markup to prettify.
-        @type markup: str
-
-        @return: Prettified HTML with several markup tags replaced with HTML
-            equivalents.
-        @rtype: str
-        """
         soup = BeautifulSoup(markup)
         self._convert_markup_basic(soup)
         self._convert_markup_images(soup)
@@ -184,13 +174,7 @@ class MarkupToHTMLConverter(object):
         return soup.prettify()
 
     def _convert_markup_basic(self, soup):
-        """
-        Perform basic conversion of instructions markup. This includes
-        replacement of several textual markup tags with their HTML equivalents.
 
-        @param soup: BeautifulSoup instance.
-        @type soup: BeautifulSoup
-        """
         # Inject meta charset tag
         meta = soup.new_tag('meta', charset='UTF-8')
         soup.insert(0, meta)
@@ -223,13 +207,6 @@ class MarkupToHTMLConverter(object):
             list_.name = 'ol' if type_ == 'numbers' else 'ul'
 
     def _convert_markup_images(self, soup):
-        """
-        Convert images of instructions markup. Images are downloaded,
-        base64-encoded and inserted into <img> tags.
-
-        @param soup: BeautifulSoup instance.
-        @type soup: BeautifulSoup
-        """
         # 6. Replace <img> assets with actual image contents
         images = [image for image in soup.find_all('img')
                   if image.attrs.get('assetid') is not None]
@@ -249,13 +226,6 @@ class MarkupToHTMLConverter(object):
                     asset.content_type, encoded64)
 
     def _convert_markup_audios(self, soup):
-        """
-        Convert audios of instructions markup. Audios are downloaded,
-        base64-encoded and inserted as <audio controls> <source> tag.
-
-        @param soup: BeautifulSoup instance.
-        @type soup: BeautifulSoup
-        """
         # 7. Replace <asset> audio assets with actual audio contents
         audios = [audio for audio in soup.find_all('asset')
                   if audio.attrs.get('id') is not None
@@ -290,31 +260,11 @@ class OnDemandCourseMaterialItemsV1(object):
     """
 
     def __init__(self, items):
-        """
-        Initialization. Build a map from lessonId to Lecture (item)
-
-        @param items: linked.OnDemandCourseMaterialItems key of
-            OPENCOURSE_ONDEMAND_COURSE_MATERIALS response.
-        @type items: dict
-        """
         # Build a map of lessonId => Item
         self._items = dict((item['lessonId'], item) for item in items)
 
     @staticmethod
     def create(session, course_name):
-        """
-        Create an instance using a session and a course_name.
-
-        @param session: Requests session.
-        @type session: requests.Session
-
-        @param course_name: Course name (slug) from course json.
-        @type course_name: str
-
-        @return: Instance of OnDemandCourseMaterialItems
-        @rtype: OnDemandCourseMaterialItems
-        """
-
         dom = get_page(session, OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
                        json=True,
                        class_name=course_name)
@@ -322,41 +272,12 @@ class OnDemandCourseMaterialItemsV1(object):
             dom['linked']['onDemandCourseMaterialItems.v1'])
 
     def get(self, lesson_id):
-        """
-        Return lecture by lesson ID.
-
-        @param lesson_id: Lesson ID.
-        @type lesson_id: str
-
-        @return: Lesson JSON.
-        @rtype: dict
-        Example:
-        {
-          "id": "AUd0k",
-          "moduleId": "0MGvs",
-          "lessonId": "QgCuM",
-          "name": "Programming Assignment 1: Decomposition of Graphs",
-          "slug": "programming-assignment-1-decomposition-of-graphs",
-          "timeCommitment": 10800000,
-          "content": {
-            "typeName": "gradedProgramming",
-            "definition": {
-              "programmingAssignmentId": "zHzR5yhHEeaE0BKOcl4zJQ@2",
-              "gradingWeight": 20
-            }
-          },
-          "isLocked": true,
-          "itemLockedReasonCode": "PREMIUM",
-          "trackId": "core"
-        },
-        """
+        
         return self._items.get(lesson_id)
 
 
 class Asset(namedtuple('Asset', 'id name type_name url content_type data')):
-    """
-    This class contains information about an asset.
-    """
+
     __slots__ = ()
 
     def __repr__(self):
@@ -365,9 +286,6 @@ class Asset(namedtuple('Asset', 'id name type_name url content_type data')):
 
 
 class AssetRetriever(object):
-    """
-    This class helps download assets by their ID.
-    """
 
     def __init__(self, session):
         self._session = session
@@ -542,27 +460,6 @@ class VideosV1(object):
         return next(iter(self.children.values()))
 
 
-# def expand_specializations(session, class_names):
-#     """
-#     Checks whether any given name is not a class but a specialization.
-
-#     If it's a specialization, expand the list of class names with the child
-#     class names.
-#     """
-#     result = []
-#     for class_name in class_names:
-#         specialization = SpecializationV1.create(session, class_name)
-#         if specialization is None:
-#             result.append(class_name)
-#         else:
-#             result.extend(specialization.children)
-#             logging.info('Expanded specialization "%s" into the following'
-#                          ' classes: %s',
-#                          class_name, ' '.join(specialization.children))
-
-#     return result
-
-
 @attr.s
 class SpecializationV1(object):
     children = attr.ib()
@@ -582,30 +479,11 @@ class SpecializationV1(object):
 
 
 class CourseraOnDemand(object):
-    """
-    This is a class that provides a friendly interface to extract certain
-    parts of on-demand courses. On-demand class is a new format that Coursera
-    is using, they contain `/learn/' in their URLs. This class does not support
-    old-style Coursera classes. This API is by no means complete.
-    """
 
     def __init__(self, session, course_id, course_name,
                  unrestricted_filenames=False,
                  mathjax_cdn_url=None):
-        """
-        Initialize Coursera OnDemand API.
 
-        @param session: Current session that holds cookies and so on.
-        @type session: requests.Session
-
-        @param course_id: Course ID from course json.
-        @type course_id: str
-
-        @param unrestricted_filenames: Flag that indicates whether grabbed
-            file names should endure stricter character filtering. @see
-            `clean_filename` for the details.
-        @type unrestricted_filenames: bool
-        """
         self._session = session
         self._notebook_cookies = None
         self._course_id = course_id
@@ -671,14 +549,7 @@ class CourseraOnDemand(object):
                 filename, extension = os.path.splitext(clean_url(tmp_url))
 
                 head, tail = os.path.split(content['path'])
-                # '/' in the following line is for a reason:
-                # @noureddin says: "I split head using split('/') not
-                # os.path.split() because it's seems to me that it comes from a
-                # web page, so the separator will always be /, so using the
-                # native path splitting function is not the most portable
-                # way to do it."
-                # Original pull request:
-                # https://github.com/coursera-dl/coursera-dl/pull/654
+
                 head = '/'.join([clean_filename(dir, minimal_change=True)
                                  for dir in head.split('/')])
                 tail = clean_filename(tail, minimal_change=True)
@@ -907,20 +778,7 @@ class CourseraOnDemand(object):
                 for asset in dom['linked']['openCourseAssets.v1']]
 
     def _normalize_assets(self, assets):
-        """
-        Perform asset normalization. For some reason, assets that are sometimes
-        present in lectures, have "@1" at the end of their id. Such "uncut"
-        asset id when fed to OPENCOURSE_ASSETS_URL results in error that says:
-        "Routing error: 'get-all' not implemented". To avoid that, the last
-        two characters from asset id are cut off and after that that method
-        works fine. It looks like, Web UI is doing the same.
 
-        @param assets: List of asset ids.
-        @type assets: [str]
-
-        @return: Normalized list of asset ids (without trailing "@1")
-        @rtype: [str]
-        """
         new_assets = []
 
         for asset in assets:
@@ -933,14 +791,7 @@ class CourseraOnDemand(object):
         return new_assets
 
     def _extract_links_from_lecture_assets(self, asset_ids):
-        """
-        Extract links to files of the asset ids.
 
-        @param asset_ids: List of asset ids.
-        @type asset_ids: [str]
-
-        @return: @see CourseraOnDemand._extract_links_from_text
-        """
         links = {}
 
         def _add_asset(name, url, destination):
@@ -967,19 +818,7 @@ class CourseraOnDemand(object):
         return links
 
     def _get_asset_urls(self, asset_id):
-        """
-        Get list of asset urls and file names. This method may internally
-        use AssetRetriever to extract `asset` element types.
 
-        @param asset_id: Asset ID.
-        @type asset_id: str
-
-        @return List of dictionaries with asset file names and urls.
-        @rtype [{
-            'name': '<filename.ext>'
-            'url': '<url>'
-        }]
-        """
         dom = get_page(self._session, OPENCOURSE_ASSETS_URL,
                        json=True, id=asset_id)
         logging.debug('Parsing JSON for asset_id <%s>.', asset_id)
@@ -990,30 +829,13 @@ class CourseraOnDemand(object):
             typeName = element['typeName']
             definition = element['definition']
 
-            # Elements of `asset` types look as follows:
-            #
-            # {'elements': [{'definition': {'assetId': 'gtSfvscoEeW7RxKvROGwrw',
-            #                               'name': 'Презентация к лекции'},
-            #                'id': 'phxNlMcoEeWXCQ4nGuQJXw',
-            #                'typeName': 'asset'}],
-            #  'linked': None,
-            #  'paging': None}
-            #
             if typeName == 'asset':
                 open_course_asset_id = definition['assetId']
                 for asset in self._asset_retriever([open_course_asset_id],
                                                    download=False):
                     urls.append({'name': asset.name, 'url': asset.url})
 
-            # Elements of `url` types look as follows:
-            #
-            # {'elements': [{'definition': {'name': 'What motivates you.pptx',
-            #                               'url': 'https://d396qusza40orc.cloudfront.net/learning/Powerpoints/2-4A_What_motivates_you.pptx'},
-            #                'id': '0hixqpWJEeWQkg5xdHApow',
-            #                'typeName': 'url'}],
-            #  'linked': None,
-            #  'paging': None}
-            #
+
             elif typeName == 'url':
                 urls.append({'name': definition['name'].strip(),
                              'url': definition['url'].strip()})
@@ -1133,15 +955,7 @@ class CourseraOnDemand(object):
         return subtitle_links
 
     def extract_links_from_programming_immediate_instructions(self, element_id):
-        """
-        Return a dictionary with links to supplement files (pdf, csv, zip,
-        ipynb, html and so on) extracted from graded programming assignment.
 
-        @param element_id: Element ID to extract files from.
-        @type element_id: str
-
-        @return: @see CourseraOnDemand._extract_links_from_text
-        """
         logging.debug('Extracting links from programming immediate '
                       'instructions for element_id <%s>.', element_id)
 
@@ -1168,15 +982,7 @@ class CourseraOnDemand(object):
             return None
 
     def extract_links_from_programming(self, element_id):
-        """
-        Return a dictionary with links to supplement files (pdf, csv, zip,
-        ipynb, html and so on) extracted from graded programming assignment.
 
-        @param element_id: Element ID to extract files from.
-        @type element_id: str
-
-        @return: @see CourseraOnDemand._extract_links_from_text
-        """
         logging.debug(
             'Gathering supplement URLs for element_id <%s>.', element_id)
 
@@ -1202,15 +1008,7 @@ class CourseraOnDemand(object):
             return None
 
     def extract_links_from_peer_assignment(self, element_id):
-        """
-        Return a dictionary with links to supplement files (pdf, csv, zip,
-        ipynb, html and so on) extracted from peer assignment.
 
-        @param element_id: Element ID to extract files from.
-        @type element_id: str
-
-        @return: @see CourseraOnDemand._extract_links_from_text
-        """
         logging.debug(
             'Gathering supplement URLs for element_id <%s>.', element_id)
 
@@ -1236,12 +1034,7 @@ class CourseraOnDemand(object):
             return None
 
     def extract_links_from_supplement(self, element_id):
-        """
-        Return a dictionary with supplement files (pdf, csv, zip, ipynb, html
-        and so on) extracted from supplement page.
 
-        @return: @see CourseraOnDemand._extract_links_from_text
-        """
         logging.debug(
             'Gathering supplement URLs for element_id <%s>.', element_id)
 
@@ -1282,22 +1075,7 @@ class CourseraOnDemand(object):
             return None
 
     def _extract_asset_tags(self, text):
-        """
-        Extract asset tags from text into a convenient form.
 
-        @param text: Text to extract asset tags from. This text contains HTML
-            code that is parsed by BeautifulSoup.
-        @type text: str
-
-        @return: Asset map.
-        @rtype: {
-            '<id>': {
-                'name': '<name>',
-                'extension': '<extension>'
-            },
-            ...
-        }
-        """
         soup = BeautifulSoup(text)
         asset_tags_map = {}
 
@@ -1308,18 +1086,7 @@ class CourseraOnDemand(object):
         return asset_tags_map
 
     def _extract_asset_urls(self, asset_ids):
-        """
-        Extract asset URLs along with asset ids.
 
-        @param asset_ids: List of ids to get URLs for.
-        @type assertn: [str]
-
-        @return: List of dictionaries with asset URLs and ids.
-        @rtype: [{
-            'id': '<id>',
-            'url': '<url>'
-        }]
-        """
         dom = get_page(self._session, OPENCOURSE_ASSET_URL,
                        json=True,
                        ids=quote_plus(','.join(asset_ids)))
@@ -1347,12 +1114,7 @@ class CourseraOnDemand(object):
             return None
 
     def extract_links_from_reference(self, short_id):
-        """
-        Return a dictionary with supplement files (pdf, csv, zip, ipynb, html
-        and so on) extracted from supplement page.
 
-        @return: @see CourseraOnDemand._extract_links_from_text
-        """
         logging.debug('Gathering resource URLs for short_id <%s>.', short_id)
 
         try:
@@ -1392,15 +1154,7 @@ class CourseraOnDemand(object):
             return None
 
     def _extract_programming_immediate_instructions_text(self, element_id):
-        """
-        Extract assignment text (instructions).
 
-        @param element_id: Element id to extract assignment instructions from.
-        @type element_id: str
-
-        @return: List of assignment text (instructions).
-        @rtype: [str]
-        """
         dom = get_page(self._session, OPENCOURSE_PROGRAMMING_IMMEDIATE_INSTRUCTIOINS_URL,
                        json=True,
                        course_id=self._course_id,
@@ -1410,15 +1164,7 @@ class CourseraOnDemand(object):
                 for element in dom['elements']]
 
     def _extract_notebook_text(self, element_id):
-        """
-        Extract notebook text (instructions).
 
-        @param element_id: Element id to extract notebook links.
-        @type element_id: str
-
-        @return: Notebook URL.
-        @rtype: [str]
-        """
         headers = self._auth_headers_with_json()
         data = {'courseId': self._course_id,
                 'learnerId': self._user_id, 'itemId': element_id}

@@ -119,22 +119,13 @@ PATH_COOKIES = os.path.join(PATH_CACHE, 'cookies')
 
 WINDOWS_UNC_PREFIX = u'\\\\?\\'
 
-#: This extension is used to save contents of supplementary instructions.
 IN_MEMORY_EXTENSION = 'html'
 
-#: This marker is added in front of a URL when supplementary instructions
-#: are passed from parser to downloader. URL field fill contain the data
-#: that will be stored to a file. The marker should be removed from URL
-#: field first.
 IN_MEMORY_MARKER = '#inmemory#'
 
-#: These are hard limits for format (file extension) and
-#: title (file name) lengths to avoid too long file names
-#: (longer than 255 characters)
 FORMAT_MAX_LENGTH = 20
 TITLE_MAX_LENGTH = 200
 
-#: CSS that is usen to prettify instructions
 INSTRUCTIONS_HTML_INJECTION_PRE = '''
 <style>
 body {

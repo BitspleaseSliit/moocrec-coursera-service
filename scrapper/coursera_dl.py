@@ -11,24 +11,24 @@ import bs4
 import six
 import requests
 
-from cookies import (
+from .cookies import (
     AuthenticationFailed, ClassNotFound,
     get_cookies_for_class, make_cookie_values, TLSAdapter, login)
-from define import (CLASS_URL, ABOUT_URL, PATH_CACHE)
-from downloaders import get_downloader
-from workflow import CourseraDownloader
-from parallel import ConsecutiveDownloader, ParallelDownloader
-from utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
+from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE)
+from .downloaders import get_downloader
+from .workflow import CourseraDownloader
+from .parallel import ConsecutiveDownloader, ParallelDownloader
+from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     print_ssl_error_message,
                     decode_input, BeautifulSoup, is_debug_run,
                     spit_json, slurp_json)
 
 # from api import expand_specializations
-from network import get_page, get_page_and_url
-from commandline import parse_args
-from extractors import CourseraExtractor
+from .network import get_page, get_page_and_url
+from .commandline import parse_args
+from .extractors import CourseraExtractor
 
-from coursera import __version__
+from scrapper import __version__
 
 # Login Details
 USERNAME = "bitpleasesliit@gmail.com"
@@ -107,8 +107,6 @@ def download_on_demand_class(session, args, class_name):
     if course_downloader.skipped_urls:
         print_skipped_urls(course_downloader.skipped_urls)
 
-    # Print failed URLs if any
-    # FIXME: should we set non-zero exit code if we have failed URLs?
     if course_downloader.failed_urls:
         print_failed_urls(course_downloader.failed_urls)
 
@@ -118,8 +116,7 @@ def download_on_demand_class(session, args, class_name):
 def print_skipped_urls(skipped_urls):
     logging.info('The following URLs (%d) have been skipped and not '
                  'downloaded:', len(skipped_urls))
-    logging.info('(if you want to download these URLs anyway, please '
-                 'add "--disable-url-skipping" option)')
+
     logging.info('-' * 80)
     for url in skipped_urls:
         logging.info(url)
@@ -149,8 +146,8 @@ def scrapper(course_path):
 
     args.class_names = [course_path] # class Name should 
 
-    logging.info('coursera_dl args %s', args) # XXXX
-    logging.info('coursera_dl version %s', __version__) # XXXX
+    logging.info('MOCCRec args %s', args) # XXXX
+    logging.info('MOCCRec version %s', __version__) # XXXX
     completed_classes = []
     classes_with_errors = []
 
@@ -164,8 +161,6 @@ def scrapper(course_path):
 
     session = get_session()
     login(session, USERNAME, PASSWORD)
-    # if args.specialization:
-    #     args.class_names = expand_specializations(session, args.class_names)
 
     for class_index, class_name in enumerate(args.class_names):
         try:
@@ -190,8 +185,7 @@ def scrapper(course_path):
             logging.error('Could not authenticate: %s', e)
 
         if class_index + 1 != len(args.class_names):
-            logging.info('Sleeping for %d seconds before downloading next course. '
-                         'You can change this with --download-delay option.',
+            logging.info('Sleeping for %d seconds before downloading next course. ',
                          args.download_delay)
             time.sleep(args.download_delay)
 
@@ -203,9 +197,7 @@ def scrapper(course_path):
     if classes_with_errors:
         logging.info('-' * 80)
         logging.info('The following classes had errors during the syllabus'
-                     ' parsing stage. You may want to review error messages and'
-                     ' courses (sometimes enrolling to the course or switching'
-                     ' session helps):')
+                     ' parsing stage.')
         for class_name in classes_with_errors:
             logging.info('%s (https://www.coursera.org/learn/%s)',
                          class_name, class_name)

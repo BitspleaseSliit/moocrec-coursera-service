@@ -25,13 +25,13 @@ from six.moves import html_parser
 from six.moves.urllib.parse import ParseResult
 from six.moves.urllib_parse import unquote_plus
 
-#  six.moves doesn’t support urlparse
+
 if six.PY3:  # pragma: no cover
     from urllib.parse import urlparse, urljoin
 else:
     from urlparse import urlparse, urljoin
 
-# Python3 (and six) don't provide string
+
 if six.PY3:
     from string import ascii_letters as string_ascii_letters
     from string import digits as string_digits
@@ -39,9 +39,9 @@ else:
     from string import letters as string_ascii_letters
     from string import digits as string_digits
 
-from define import COURSERA_URL, WINDOWS_UNC_PREFIX
+from .define import COURSERA_URL, WINDOWS_UNC_PREFIX
 
-# Force us of bs4 with html.parser
+
 
 
 def BeautifulSoup(page): return BeautifulSoup_(page, 'html.parser')
@@ -87,8 +87,7 @@ def random_string(length):
     return ''.join(random.choice(valid_chars) for i in range(length))
 
 
-# Taken from: https://wiki.python.org/moin/EscapingHtml
-# escape() and unescape() takes care of &, < and >.
+
 HTML_ESCAPE_TABLE = {
     '"': "&quot;",
     "'": "&apos;"
@@ -149,18 +148,7 @@ def clean_filename(s, minimal_change=False):
 
 
 def normalize_path(path):
-    """
-    Normalizes path on Windows OS. This means prepending
-    <backslash><backslash>?<backslash> to the path to get access to
-    Win32 device namespace instead of Win32 file namespace.
-    See https://msdn.microsoft.com/en-us/library/aa365247%28v=vs.85%29.aspx#maxpath
 
-    @param path: Path to normalize.
-    @type path: str
-
-    @return: Normalized path.
-    @rtype str
-    """
     if sys.platform != 'win32':
         return path
 
@@ -230,16 +218,7 @@ def fix_url(url):
 
 
 def is_course_complete(last_update):
-    """
-    Determine is the course is likely to have been terminated or not.
 
-    We return True if the timestamp given by last_update is 30 days or older
-    than today's date.  Otherwise, we return True.
-
-    The intended use case for this is to detect if a given courses has not
-    seen any update in the last 30 days or more.  Otherwise, we return True,
-    since it is probably too soon to declare the course complete.
-    """
     rv = False
     if last_update >= 0:
         delta = time.time() - last_update
@@ -272,18 +251,7 @@ def make_coursera_absolute_url(url):
 
 
 def extend_supplement_links(destination, source):
-    """
-    Extends (merges) destination dictionary with supplement_links
-    from source dictionary. Values are expected to be lists, or any
-    data structure that has `extend` method.
 
-    @param destination: Destination dictionary that will be extended.
-    @type destination: @see CourseraOnDemand._extract_links_from_text
-
-    @param source: Source dictionary that will be used to extend
-        destination dictionary.
-    @type source: @see CourseraOnDemand._extract_links_from_text
-    """
     for key, value in iteritems(source):
         if key not in destination:
             destination[key] = value
@@ -302,8 +270,6 @@ def print_ssl_error_message(exception):
 # The following error has just occurred:
 # %s %s
 #
-# Please read instructions on how to fix this error here:
-# https://github.com/coursera-dl/coursera-dl#sslerror-errno-1-_sslc504-error14094410ssl-routinesssl3_read_bytessslv3-alert-handshake-failure
 #####################################################################
 """ % (type(exception).__name__, str(exception))
     logging.error(message)

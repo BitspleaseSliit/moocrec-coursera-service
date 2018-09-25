@@ -2,6 +2,8 @@ import os, stat
 import shutil
 from scrapper.coursera_dl import ( scrapper )
 from db.coursedb import ( Courses )
+import topics_complexity
+from predict import ( getVideoStyleValues )
 
 
 def deleteDownloadContent(course):
@@ -30,6 +32,14 @@ if __name__ == '__main__':
 
     for course in download_courses:
         if scrapper(course["path"]):
+
+            topicResult = topics_complexity.generate_topics_complexity(course["path"])
+            courses.updateAbstractTopics(topicResult["topics"], course)
+            courses.updateComplexityLevel(topicResult["level"], course)
+
+            video_styles = getVideoStyleValues(course["path"])
+            courses.updateVideoStyle(video_styles, course)
+
             courses.updateProcessedTrue(course)
             print("course download successfull")
             deleteDownloadContent(download_courses[0])

@@ -8,11 +8,11 @@ import subprocess
 
 import requests
 
-from formatting import format_section, get_lecture_filename
-from playlist import create_m3u_playlist
-from utils import is_course_complete, mkdir_p, normalize_path
-from filtering import find_resources_to_get, skip_format_url
-from define import IN_MEMORY_MARKER
+from .formatting import format_section, get_lecture_filename
+from .playlist import create_m3u_playlist
+from .utils import is_course_complete, mkdir_p, normalize_path
+from .filtering import find_resources_to_get, skip_format_url
+from .define import IN_MEMORY_MARKER
 
 
 def _iter_modules(modules, class_name, path, ignored_formats, args):
